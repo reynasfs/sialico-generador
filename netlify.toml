@@ -1,0 +1,9 @@
+[[redirects]]
+  from = "/api/consecutivo"
+  to = "/.netlify/functions/consecutivo"
+  status = 200
+
+[[redirects]]
+  from = "/api/registrar"
+  to = "/.netlify/functions/registrar"
+  status = 200

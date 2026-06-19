@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sialico — Generador de Constancias</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --dark-blue: #011A38;
+    --bright-blue: #0057FF;
+    --bright-blue-hover: #0046CC;
+    --green: #1a7f3c;
+    --green-bg: #e6f4ea;
+    --amber: #856404;
+    --amber-bg: #fff8e1;
+    --red: #c0392b;
+    --red-bg: #fdecea;
+    --gray-50: #F8F9FA;
+    --gray-100: #F1F3F5;
+    --gray-200: #E9ECEF;
+    --gray-400: #ADB5BD;
+    --gray-600: #6C757D;
+    --gray-800: #343A40;
+    --white: #FFFFFF;
+    --font: 'Archivo', sans-serif;
+    --radius: 8px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.06);
+  }
+
+  body {
+    font-family: var(--font);
+    background: var(--gray-100);
+    color: var(--gray-800);
+    min-height: 100vh;
+  }
+
+  /* ── Header ── */
+  header {
+    background: var(--dark-blue);
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .logo-mark {
+    width: 36px; height: 36px;
+    background: var(--bright-blue);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; font-weight: 900; color: white; letter-spacing: -1px;
+    flex-shrink: 0;
+  }
+  header h1 {
+    font-size: 15px; font-weight: 600;
+    color: rgba(255,255,255,0.9);
+    letter-spacing: 0.02em;
+  }
+  header span {
+    font-size: 13px; color: rgba(255,255,255,0.4);
+    font-weight: 400; margin-left: 4px;
+  }
+
+  /* ── Layout ── */
+  .main {
+    max-width: 880px;
+    margin: 32px auto;
+    padding: 0 24px 64px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    align-items: start;
+  }
+
+  /* ── Card ── */
+  .card {
+    background: var(--white);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .card-header {
+    padding: 18px 24px 14px;
+    border-bottom: 1px solid var(--gray-200);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .card-header .icon {
+    width: 28px; height: 28px;
+    background: var(--gray-100);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+  }
+  .card-header h2 {
+    font-size: 13px; font-weight: 600;
+    color: var(--gray-600);
+    text-transform: uppercase; letter-spacing: 0.06em;
+  }
+  .card-body { padding: 24px; }
+
+  /* ── Form ── */
+  .field { margin-bottom: 18px; }
+  .field:last-child { margin-bottom: 0; }
+  label {
+    display: block;
+    font-size: 12px; font-weight: 600;
+    color: var(--gray-600);
+    text-transform: uppercase; letter-spacing: 0.05em;
+    margin-bottom: 6px;
+  }
+  select, input[type="text"], input[type="date"], input[type="number"] {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1.5px solid var(--gray-200);
+    border-radius: var(--radius);
+    font-family: var(--font);
+    font-size: 14px;
+    color: var(--gray-800);
+    background: var(--white);
+    transition: border-color 0.15s;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  select:focus, input:focus {
+    outline: none;
+    border-color: var(--bright-blue);
+    box-shadow: 0 0 0 3px rgba(0,87,255,0.08);
+  }
+
+  /* Folio preview */
+  .folio-preview {
+    background: var(--dark-blue);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin-bottom: 18px;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px;
+  }
+  .folio-preview .label {
+    font-size: 11px; font-weight: 600;
+    color: rgba(255,255,255,0.4);
+    text-transform: uppercase; letter-spacing: 0.08em;
+    flex-shrink: 0;
+  }
+  .folio-preview .folio-value {
+    font-size: 20px; font-weight: 900;
+    color: var(--white);
+    letter-spacing: 0.03em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ── Botón principal ── */
+  .btn-primary {
+    width: 100%;
+    padding: 12px 20px;
+    background: var(--bright-blue);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    font-family: var(--font);
+    font-size: 14px; font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+    letter-spacing: 0.01em;
+  }
+  .btn-primary:hover { background: var(--bright-blue-hover); }
+  .btn-primary:active { transform: scale(0.98); }
+  .btn-primary:disabled {
+    background: var(--gray-400);
+    cursor: not-allowed; transform: none;
+  }
+
+  /* ── Panel resultado ── */
+  #panel-resultado { display: none; }
+  #panel-resultado.visible { display: block; }
+
+  .resultado-estado {
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    margin-bottom: 20px;
+    font-size: 13px; font-weight: 600;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .resultado-estado.ok { background: var(--green-bg); color: var(--green); }
+
+  /* QR */
+  .qr-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 20px;
+    background: var(--gray-50);
+    border-radius: var(--radius);
+    border: 1.5px dashed var(--gray-200);
+    margin-bottom: 20px;
+  }
+  #qrcode canvas, #qrcode img {
+    border-radius: 4px;
+  }
+  .qr-folio-label {
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--gray-600);
+    text-transform: uppercase;
+    text-align: center;
+  }
+
+  /* Datos del documento */
+  .doc-data { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+  .doc-row {
+    display: flex; justify-content: space-between;
+    font-size: 13px; padding-bottom: 10px;
+    border-bottom: 1px solid var(--gray-100);
+  }
+  .doc-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .doc-row .key { color: var(--gray-600); font-weight: 500; }
+  .doc-row .val { font-weight: 600; color: var(--gray-800); text-align: right; max-width: 55%; }
+  .hash-val {
+    font-size: 11px !important;
+    font-family: 'Courier New', monospace;
+    color: var(--gray-600) !important;
+    word-break: break-all;
+    text-align: right;
+  }
+
+  /* Botones de acción */
+  .acciones { display: flex; flex-direction: column; gap: 10px; }
+  .btn-accion {
+    width: 100%;
+    padding: 11px 16px;
+    border-radius: var(--radius);
+    font-family: var(--font);
+    font-size: 13px; font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    border: 1.5px solid transparent;
+  }
+  .btn-descargar {
+    background: var(--green);
+    color: white;
+    border-color: var(--green);
+  }
+  .btn-descargar:hover { background: #166534; border-color: #166534; }
+
+  .btn-copiar-url {
+    background: var(--white);
+    color: var(--gray-800);
+    border-color: var(--gray-200);
+  }
+  .btn-copiar-url:hover { border-color: var(--bright-blue); color: var(--bright-blue); }
+
+  .btn-nuevo {
+    background: var(--white);
+    color: var(--gray-600);
+    border-color: var(--gray-200);
+    font-weight: 500;
+  }
+  .btn-nuevo:hover { border-color: var(--gray-400); }
+
+  /* Instrucción Wix */
+  .wix-tip {
+    background: var(--amber-bg);
+    border-left: 3px solid #f59e0b;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    padding: 12px 16px;
+    font-size: 12px;
+    color: var(--amber);
+    line-height: 1.6;
+    margin-top: 10px;
+  }
+  .wix-tip strong { font-weight: 700; }
+
+  /* ── Contador ── */
+  .contador-wrap {
+    grid-column: 1 / -1;
+    background: var(--white);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    padding: 16px 24px;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 12px;
+  }
+  .contador-info { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .stat { display: flex; align-items: baseline; gap: 6px; }
+  .stat .num { font-size: 22px; font-weight: 900; color: var(--dark-blue); }
+  .stat .lbl { font-size: 12px; color: var(--gray-600); font-weight: 500; }
+  .btn-reset {
+    font-size: 12px; color: var(--gray-400);
+    background: none; border: none; cursor: pointer;
+    font-family: var(--font);
+    padding: 4px 8px; border-radius: 4px;
+    transition: color 0.15s;
+  }
+  .btn-reset:hover { color: var(--red); }
+
+  @media (max-width: 640px) {
+    .main { grid-template-columns: 1fr; }
+    .contador-wrap { grid-column: 1; }
+    header { padding: 14px 20px; }
+    .main { padding: 0 16px 48px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-mark">SF</div>
+  <div>
+    <h1>Sialico Food Safety <span>· Herramienta interna</span></h1>
+  </div>
+</header>
+
+<div class="main">
+
+  <!-- Contador global -->
+  <div class="contador-wrap">
+    <div class="contador-info">
+      <div class="stat">
+        <span class="num" id="cntTotal">—</span>
+        <span class="lbl">total histórico</span>
+      </div>
+      <div class="stat">
+        <span class="num" id="cntAnio">—</span>
+        <span class="lbl">en <span id="anioActual">2026</span></span>
+      </div>
+      <div class="stat">
+        <span class="num" id="cntSiguiente">—</span>
+        <span class="lbl">próximo consecutivo</span>
+      </div>
+    </div>
+    <button class="btn-reset" onclick="resetContador()">¿Cómo funciona el contador?</button>
+  </div>
+
+  <!-- ── Columna izquierda: formulario ── -->
+  <div>
+    <div class="card">
+      <div class="card-header">
+        <div class="icon">📄</div>
+        <h2>Datos del documento</h2>
+      </div>
+      <div class="card-body">
+
+        <!-- Folio en tiempo real -->
+        <div class="folio-preview">
+          <span class="label">Folio</span>
+          <span class="folio-value" id="folioPreview">CS-2026-???</span>
+        </div>
+
+        <!-- Estado conexión Wix -->
+        <div id="estadoConexion" style="
+          border-radius: var(--radius); padding: 10px 14px;
+          font-size: 12px; font-weight: 600; margin-bottom: 18px;
+          background: var(--amber-bg); color: var(--amber);
+          transition: all 0.2s;
+        ">🔑 Ingresa el API Key para conectar con Wix</div>
+
+        <div class="field">
+          <label>API Key (Wix Secrets Manager)</label>
+          <input type="text" id="apiKey" placeholder="Sialico2026$QR#Generador..." oninput="consultarWix()" style="font-family: monospace; font-size: 13px;">
+        </div>
+
+        <div class="field">
+          <label>Tipo de constancia</label>
+          <select id="tipoCert" onchange="onTipoChange()">
+            <option value="CS">CS — Constancia General</option>
+            <option value="HACCP">HACCP — Análisis de Peligros</option>
+            <option value="BPM">BPM — Buenas Prácticas de Manufactura</option>
+            <option value="CAP">CAP — Capacitación</option>
+            <option value="AUD">AUD — Auditoría</option>
+            <option value="RPT">RPT — Reporte Técnico</option>
+            <option value="LBL">LBL — Etiquetado</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Empresa cliente</label>
+          <input type="text" id="empresa" placeholder="Ej. Alimentos XYZ SA de CV" oninput="actualizarHash()">
+        </div>
+
+        <div class="field">
+          <label>Fecha de emisión</label>
+          <input type="date" id="fechaEmision" onchange="actualizarHash()">
+        </div>
+
+        <div class="field">
+          <label>Consecutivo manual (opcional)</label>
+          <input type="number" id="consecutivoManual" placeholder="Dejar vacío = automático" min="1" max="999" oninput="actualizarFolio()">
+        </div>
+
+        <button class="btn-primary" id="btnGenerar" onclick="generarQR()">
+          Generar QR y registrar
+        </button>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Columna derecha: resultado ── -->
+  <div>
+
+    <!-- Estado vacío -->
+    <div id="panel-vacio" class="card">
+      <div class="card-body" style="text-align:center; padding: 48px 24px; color: var(--gray-400);">
+        <div style="font-size:40px; margin-bottom:12px;">⬛</div>
+        <div style="font-size:13px; font-weight:500; line-height:1.6;">
+          Completa los datos y<br>presiona <strong style="color:var(--gray-600)">Generar QR</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resultado -->
+    <div id="panel-resultado" class="card">
+      <div class="card-header">
+        <div class="icon">✅</div>
+        <h2>QR generado</h2>
+      </div>
+      <div class="card-body">
+
+        <div class="resultado-estado ok" id="estadoRegistro">
+          ✓ Listo para insertar en el documento
+        </div>
+
+        <div class="qr-wrap">
+          <div id="qrcode"></div>
+          <div class="qr-folio-label" id="qrFolioLabel">CS-2026-001</div>
+        </div>
+
+        <div class="doc-data" id="docData"></div>
+
+        <div class="acciones">
+          <button class="btn-accion btn-descargar" onclick="descargarQR()">
+            ⬇ Descargar QR como PNG
+          </button>
+          <button class="btn-accion btn-copiar-url" onclick="copiarURL()">
+            🔗 Copiar URL de verificación
+          </button>
+          <button class="btn-accion btn-nuevo" onclick="nuevoDocumento()">
+            ＋ Nuevo documento
+          </button>
+        </div>
+
+        <div class="wix-tip" id="wixTip">
+          <strong>Siguiente paso:</strong> Descarga el QR e insértalo en tu PPTX antes de exportar a PDF.
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+// ══ Estado global ══
+const BASE_URL = 'https://www.gruposialico.com/constancias/';
+const WIX_ENDPOINT = 'https://www.gruposialico.com/_functions/siguienteConsecutivo';
+let estadoActual = null;
+let consecutivoWix = null; // Cache del consecutivo consultado a Wix
+let consultandoWix = false;
+
+// ══ Inicialización ══
+window.onload = () => {
+  const hoy = new Date().toISOString().split('T')[0];
+  document.getElementById('fechaEmision').value = hoy;
+  document.getElementById('anioActual').textContent = new Date().getFullYear();
+
+  // Cargar API key guardada localmente (solo comodidad, no es sensible en este contexto)
+  const keyGuardada = localStorage.getItem('sialico_api_key');
+  if (keyGuardada) document.getElementById('apiKey').value = keyGuardada;
+
+  consultarWix();
+};
+
+// ══ Consulta a Wix para obtener consecutivo ══
+async function consultarWix() {
+  const tipo = document.getElementById('tipoCert').value;
+  const apiKey = document.getElementById('apiKey').value.trim();
+
+  setEstadoConexion('cargando');
+
+  if (!apiKey) {
+    setEstadoConexion('sin-key');
+    actualizarFolioLocal();
+    return;
+  }
+
+  consultandoWix = true;
+  try {
+    const url = `/api/consecutivo?tipo=${tipo}&apiKey=${encodeURIComponent(apiKey)}`;
+    const resp = await fetch(url);
+    const data = await resp.json();
+
+    if (!resp.ok || data.error) {
+      throw new Error(data.error || 'Error de servidor');
+    }
+
+    consecutivoWix = data;
+    localStorage.setItem('sialico_api_key', apiKey);
+
+    // Actualizar contadores UI
+    document.getElementById('cntTotal').textContent = '—';
+    document.getElementById('cntAnio').textContent = data.totalExistentes;
+    document.getElementById('cntSiguiente').textContent = data.consecutivo;
+    document.getElementById('folioPreview').textContent = data.folio;
+
+    setEstadoConexion('ok');
+  } catch (err) {
+    consecutivoWix = null;
+    setEstadoConexion('error', err.message);
+    actualizarFolioLocal();
+  } finally {
+    consultandoWix = false;
+  }
+}
+
+function setEstadoConexion(estado, msg) {
+  const el = document.getElementById('estadoConexion');
+  const map = {
+    'cargando':  { txt: '⏳ Consultando Wix...', color: 'var(--amber)', bg: 'var(--amber-bg)' },
+    'ok':        { txt: '✓ Conectado a Wix — consecutivo en tiempo real', color: 'var(--green)', bg: 'var(--green-bg)' },
+    'error':     { txt: `⚠ Sin conexión a Wix (${msg || 'error'}) — usando modo local`, color: 'var(--red)', bg: 'var(--red-bg)' },
+    'sin-key':   { txt: '🔑 Ingresa el API Key para conectar con Wix', color: 'var(--amber)', bg: 'var(--amber-bg)' },
+  };
+  const cfg = map[estado] || map['error'];
+  el.textContent = cfg.txt;
+  el.style.color = cfg.color;
+  el.style.background = cfg.bg;
+}
+
+// ══ Folio local (fallback sin Wix) ══
+function actualizarFolioLocal() {
+  const tipo = document.getElementById('tipoCert').value;
+  const anio = new Date().getFullYear();
+  const manual = document.getElementById('consecutivoManual').value;
+  const consecutivo = manual && parseInt(manual) > 0
+    ? String(parseInt(manual)).padStart(3, '0')
+    : '???';
+  document.getElementById('cntSiguiente').textContent = consecutivo !== '???' ? consecutivo : '—';
+  document.getElementById('folioPreview').textContent = `${tipo}-${anio}-${consecutivo}`;
+}
+
+// ══ Al cambiar tipo: re-consultar Wix ══
+function onTipoChange() {
+  consecutivoWix = null;
+  consultarWix();
+}
+
+function resetContador() {
+  alert('El consecutivo lo controla Wix. Para ajustarlo, edita directamente el CMS de Wix.');
+}
+
+// ══ Hash SHA-256 ══
+async function calcularHash(texto) {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(texto);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+// ══ Generar QR ══
+async function generarQR() {
+  const tipo = document.getElementById('tipoCert').value;
+  const empresa = document.getElementById('empresa').value.trim();
+  const fecha = document.getElementById('fechaEmision').value;
+  const manual = document.getElementById('consecutivoManual').value;
+  const anio = new Date().getFullYear();
+
+  if (!empresa) {
+    alert('Por favor ingresa el nombre de la empresa cliente.');
+    document.getElementById('empresa').focus();
+    return;
+  }
+  if (!fecha) {
+    alert('Por favor selecciona la fecha de emisión.');
+    return;
+  }
+
+  // Determinar folio
+  let folio;
+  if (manual && parseInt(manual) > 0) {
+    // Consecutivo manual explícito
+    const cons = String(parseInt(manual)).padStart(3, '0');
+    folio = `${tipo}-${anio}-${cons}`;
+  } else if (consecutivoWix) {
+    // Usar el consecutivo que Wix nos dijo
+    folio = consecutivoWix.folio;
+  } else {
+    // Sin conexión y sin manual — no podemos garantizar unicidad
+    const confirmar = confirm(
+      'No hay conexión con Wix y no ingresaste un consecutivo manual.\n\n' +
+      'El folio podría duplicarse si alguien más está generando al mismo tiempo.\n\n' +
+      '¿Deseas continuar de todas formas?'
+    );
+    if (!confirmar) return;
+    folio = document.getElementById('folioPreview').textContent;
+    if (folio.includes('???')) {
+      alert('Por favor ingresa un consecutivo manual antes de continuar.');
+      document.getElementById('consecutivoManual').focus();
+      return;
+    }
+  }
+
+  // Hash y URL
+  const contenidoHash = `${folio}|${empresa}|${fecha}`;
+  const hash = await calcularHash(contenidoHash);
+  const url = `${BASE_URL}${folio}?h=${hash}`;
+
+  estadoActual = { folio, empresa, fecha, tipo, hash, url };
+
+  // Registrar automáticamente en Wix
+  const apiKey = document.getElementById('apiKey').value.trim();
+  const btnGenerar = document.getElementById('btnGenerar');
+  btnGenerar.textContent = 'Registrando en Wix...';
+  btnGenerar.disabled = true;
+
+  let registrado = false;
+  if (apiKey) {
+    try {
+      const resp = await fetch('/api/registrar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ apiKey, folio, hash, empresa, tipo, fechaEmision: fecha })
+      });
+      const data = await resp.json();
+      if (resp.ok && data.ok) {
+        registrado = true;
+      } else {
+        console.warn('Wix respondio:', data.error || data);
+      }
+    } catch (err) {
+      console.error('Error al registrar en Wix:', err);
+    }
+  }
+
+  btnGenerar.textContent = 'Generar QR y registrar';
+  btnGenerar.disabled = false;
+
+  mostrarResultado(estadoActual, registrado);
+
+  // Invalidar cache para re-consultar consecutivo en el siguiente documento
+  consecutivoWix = null;
+}
+
+function mostrarResultado({ folio, empresa, fecha, tipo, hash, url }, registrado = false) {
+  // Generar QR
+  document.getElementById('qrcode').innerHTML = '';
+  new QRCode(document.getElementById('qrcode'), {
+    text: url,
+    width: 200,
+    height: 200,
+    colorDark: '#011A38',
+    colorLight: '#FFFFFF',
+    correctLevel: QRCode.CorrectLevel.H
+  });
+
+  document.getElementById('qrFolioLabel').textContent = folio;
+
+  // Datos del documento
+  const tipoNombre = document.getElementById('tipoCert').options[document.getElementById('tipoCert').selectedIndex].text.split('—')[1].trim();
+  const fechaFormato = new Date(fecha + 'T12:00:00').toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' });
+
+  document.getElementById('docData').innerHTML = `
+    <div class="doc-row"><span class="key">Folio</span><span class="val">${folio}</span></div>
+    <div class="doc-row"><span class="key">Empresa</span><span class="val">${empresa}</span></div>
+    <div class="doc-row"><span class="key">Tipo</span><span class="val">${tipoNombre}</span></div>
+    <div class="doc-row"><span class="key">Fecha</span><span class="val">${fechaFormato}</span></div>
+    <div class="doc-row"><span class="key">Hash SHA-256</span><span class="val hash-val">${hash}</span></div>
+  `;
+
+  // Mostrar panel resultado, ocultar vacío
+  // Estado de registro en Wix
+  const estadoEl = document.getElementById('estadoRegistro');
+  if (registrado) {
+    estadoEl.style.background = 'var(--green-bg)';
+    estadoEl.style.color = 'var(--green)';
+    estadoEl.textContent = '✓ Documento registrado en Wix y listo para insertar';
+  } else {
+    estadoEl.style.background = 'var(--amber-bg)';
+    estadoEl.style.color = 'var(--amber)';
+    estadoEl.textContent = '⚠ QR generado — registra manualmente en Wix antes de enviar';
+  }
+
+  document.getElementById('panel-vacio').style.display = 'none';
+  document.getElementById('panel-resultado').style.display = 'block';
+  document.getElementById('panel-resultado').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ══ Descargar QR ══
+function descargarQR() {
+  if (!estadoActual) return;
+  const canvas = document.querySelector('#qrcode canvas');
+  if (!canvas) return;
+
+  // Crear canvas con margen blanco y folio
+  const pad = 20;
+  const labelH = 28;
+  const out = document.createElement('canvas');
+  out.width = canvas.width + pad * 2;
+  out.height = canvas.height + pad * 2 + labelH;
+  const ctx = out.getContext('2d');
+
+  ctx.fillStyle = '#FFFFFF';
+  ctx.fillRect(0, 0, out.width, out.height);
+  ctx.drawImage(canvas, pad, pad);
+
+  ctx.fillStyle = '#011A38';
+  ctx.font = `bold 13px Arial, sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.fillText(estadoActual.folio, out.width / 2, canvas.height + pad + labelH - 6);
+
+  const link = document.createElement('a');
+  link.download = `QR-${estadoActual.folio}.png`;
+  link.href = out.toDataURL('image/png');
+  link.click();
+}
+
+// ══ Copiar URL ══
+function copiarURL() {
+  if (!estadoActual) return;
+  navigator.clipboard.writeText(estadoActual.url).then(() => {
+    const btn = document.querySelector('.btn-copiar-url');
+    const original = btn.innerHTML;
+    btn.innerHTML = '✓ URL copiada';
+    btn.style.borderColor = 'var(--green)';
+    btn.style.color = 'var(--green)';
+    setTimeout(() => {
+      btn.innerHTML = original;
+      btn.style.borderColor = '';
+      btn.style.color = '';
+    }, 2000);
+  });
+}
+
+// ══ Nuevo documento ══
+function nuevoDocumento() {
+  estadoActual = null;
+  consecutivoWix = null;
+  document.getElementById('empresa').value = '';
+  document.getElementById('consecutivoManual').value = '';
+  document.getElementById('panel-resultado').style.display = 'none';
+  document.getElementById('panel-vacio').style.display = 'block';
+  // Re-consultar Wix para obtener el nuevo consecutivo
+  consultarWix();
+  document.getElementById('empresa').focus();
+}
+</script>
+
+</body>
+</html>
